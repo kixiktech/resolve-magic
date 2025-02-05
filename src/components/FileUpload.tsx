@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, File, X } from "lucide-react";
+import { Upload, File, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LegalLoadingSpinner } from "./LegalLoadingSpinner";
 import { MediationAnalysis } from "./MediationAnalysis";
-import { ArrowLeft } from "lucide-react";
 
 export const FileUpload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -24,57 +24,30 @@ export const FileUpload = () => {
 
   const analyzeFiles = async (uploadedFiles: File[]) => {
     setIsAnalyzing(true);
+    setError(null);
+    
     try {
-      const startTime = Date.now();
-
-      // Simulate analysis
-      const mockAnalysis = {
-        overview: {
-          title: "Case Overview & Dynamics",
-          content: [
-            "Multi-party commercial dispute involving breach of contract and intellectual property claims",
-            "Total claimed damages: $2.8M with significant reputational considerations",
-            "Key relationship dynamics indicate potential for business continuity post-settlement",
-            "Time-sensitive elements due to pending regulatory deadlines"
-          ]
+      const file = uploadedFiles[0]; // Process first file for now
+      const content = await file.text();
+      
+      const response = await fetch('/functions/v1/analyze-document', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        risks: {
-          title: "Risk Assessment & Leverage Points",
-          content: [
-            "Plaintiff's position strengthened by documented email exchanges and witness statements",
-            "Defendant's counterclaim lacks substantial evidence but raises valid procedural concerns",
-            "80% probability of successful mediation based on party engagement and case complexity",
-            "Critical opportunity window in next 45 days before significant cost escalation"
-          ]
-        },
-        settlement: {
-          title: "Settlement Framework & Valuation",
-          content: [
-            "Recommended settlement range: $1.8M - $2.2M based on comparable case outcomes",
-            "Non-monetary terms identified: IP licensing agreement, future business collaboration",
-            "Structured payment options available with 24-month maximum term",
-            "Tax implications favor settlement before end of fiscal quarter"
-          ]
-        },
-        strategy: {
-          title: "Strategic Recommendations",
-          content: [
-            "Begin with joint session focusing on future business opportunities rather than past grievances",
-            "Utilize bracketing technique with initial range of $1.5M - $2.5M",
-            "Address non-monetary terms early to build momentum through quick wins",
-            "Consider mediator's proposal if parties remain within 20% gap after third round"
-          ]
-        }
-      };
+        body: JSON.stringify({ documentContent: content }),
+      });
 
-      // Ensure minimum 7 second duration
-      const analysisTime = Date.now() - startTime;
-      const remainingTime = Math.max(0, 7000 - analysisTime);
-      await new Promise(resolve => setTimeout(resolve, remainingTime));
+      if (!response.ok) {
+        throw new Error('Analysis failed. Please try again.');
+      }
 
-      setAnalysis(mockAnalysis);
+      const analysisResult = await response.json();
+      setAnalysis(analysisResult);
     } catch (error) {
       console.error("Analysis failed:", error);
+      setError("Failed to analyze document. Please try again.");
+      setFiles([]);
     } finally {
       setIsAnalyzing(false);
     }
@@ -84,6 +57,7 @@ export const FileUpload = () => {
     setFiles([]);
     setAnalysis(null);
     setIsAnalyzing(false);
+    setError(null);
   };
 
   const handleDrop = async (e: React.DragEvent) => {
@@ -153,6 +127,7 @@ export const FileUpload = () => {
                 id="file-upload"
                 onChange={handleFileInput}
                 aria-label="select files"
+                accept=".txt,.doc,.docx,.pdf"
               />
               
               <div className="flex flex-col items-center justify-center text-center cursor-pointer" onClick={triggerFileInput}>
@@ -163,6 +138,9 @@ export const FileUpload = () => {
                 <p className="text-sm text-legal-gray mb-4 text-center">
                   or click to select files
                 </p>
+                {error && (
+                  <p className="text-red-500 mb-4">{error}</p>
+                )}
                 <Button 
                   variant="outline" 
                   className="bg-legal-blue/10 text-legal-gold border-legal-blue/20 hover:bg-legal-blue/20"
