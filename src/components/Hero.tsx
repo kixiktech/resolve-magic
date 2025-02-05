@@ -8,7 +8,7 @@ export const Hero = () => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-legal-blue/10 via-background/5 to-background pointer-events-none" />
       
       <div className="container px-4 md:px-6 relative z-10">
-        <div className="flex flex-col items-center space-y-12">
+        <div className="flex flex-col items-center space-y-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
