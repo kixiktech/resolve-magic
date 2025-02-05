@@ -13,7 +13,7 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-8"
+            className="space-y-8 text-center"
           >
             <div className="flex justify-center">
               <Scale className="h-16 w-16 text-legal-gold" />
