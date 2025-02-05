@@ -28,10 +28,20 @@ describe('FileUpload', () => {
     vi.useRealTimers();
   });
 
+  it('should trigger file input when clicking the select files button', () => {
+    render(<FileUpload />);
+    
+    const clickSpy = vi.spyOn(HTMLInputElement.prototype, 'click');
+    const selectButton = screen.getByText('Select Files');
+    
+    fireEvent.click(selectButton);
+    
+    expect(clickSpy).toHaveBeenCalled();
+  });
+
   it('should show loading state for minimum 7 seconds', async () => {
     render(<FileUpload />);
     
-    // Upload a file
     const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
     const input = screen.getByLabelText(/select files/i);
     
@@ -39,23 +49,18 @@ describe('FileUpload', () => {
       fireEvent.change(input, { target: { files: [file] } });
     });
 
-    // Check that loading spinner is shown
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
 
-    // Fast forward 6 seconds
     await act(async () => {
       vi.advanceTimersByTime(6000);
     });
 
-    // Loading spinner should still be visible
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
 
-    // Fast forward remaining time
     await act(async () => {
       vi.advanceTimersByTime(1000);
     });
 
-    // Now the analysis should be shown
     expect(screen.getByTestId('mediation-analysis')).toBeInTheDocument();
   });
 
@@ -88,7 +93,6 @@ describe('FileUpload', () => {
       fireEvent.change(input, { target: { files: [file] } });
     });
 
-    // Wait for loading to complete
     await act(async () => {
       vi.advanceTimersByTime(7000);
     });

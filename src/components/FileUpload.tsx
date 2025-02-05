@@ -13,7 +13,7 @@ export const FileUpload = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const { toast } = useToast();
-
+  
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -119,6 +119,13 @@ export const FileUpload = () => {
     setAnalysis(null);
   };
 
+  const triggerFileInput = () => {
+    const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       <AnimatePresence>
@@ -146,10 +153,7 @@ export const FileUpload = () => {
                 aria-label="select files"
               />
               
-              <label
-                htmlFor="file-upload"
-                className="flex flex-col items-center justify-center cursor-pointer"
-              >
+              <div className="flex flex-col items-center justify-center cursor-pointer" onClick={triggerFileInput}>
                 <Upload className="h-12 w-12 text-legal-gray mb-4" />
                 <p className="text-lg font-medium text-legal-offwhite mb-2">
                   Drag and drop your case files here
@@ -157,10 +161,17 @@ export const FileUpload = () => {
                 <p className="text-sm text-legal-gray mb-4">
                   or click to select files
                 </p>
-                <Button variant="outline" className="bg-legal-blue/10 text-legal-gold border-legal-blue/20 hover:bg-legal-blue/20">
+                <Button 
+                  variant="outline" 
+                  className="bg-legal-blue/10 text-legal-gold border-legal-blue/20 hover:bg-legal-blue/20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    triggerFileInput();
+                  }}
+                >
                   Select Files
                 </Button>
-              </label>
+              </div>
             </div>
           </motion.div>
         )}
