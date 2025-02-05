@@ -1,6 +1,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Scale, Gavel } from "lucide-react";
+import { Scale } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const ANALYSIS_PHRASES = [
@@ -29,25 +29,10 @@ export const LegalLoadingSpinner = () => {
     <div className="flex flex-col items-center justify-center p-8 min-h-[300px]">
       <div className="relative">
         <motion.div
-          className="w-24 h-24 border-4 border-legal-blue rounded-full"
+          className="w-24 h-24 flex items-center justify-center"
           animate={{
             rotate: 360,
-            borderTopColor: "#C4A349",
-            borderRightColor: "#1E3A8A",
             scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-        
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-          animate={{
-            rotate: -360,
-            scale: [1, 0.9, 1],
           }}
           transition={{
             duration: 3,
@@ -55,26 +40,11 @@ export const LegalLoadingSpinner = () => {
             ease: "linear",
           }}
         >
-          <Scale className="w-8 h-8 text-legal-gold" />
-        </motion.div>
-
-        <motion.div
-          className="absolute -top-2 left-1/2 -translate-x-1/2"
-          animate={{
-            rotate: 360,
-            y: [0, 4, 0],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <Gavel className="w-6 h-6 text-legal-gold" />
+          <Scale className="h-16 w-16 text-legal-gold" />
         </motion.div>
       </div>
 
-      <div className="h-8 mt-8 relative">
+      <div className="h-8 mt-8 relative flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.p
             key={currentPhraseIndex}
@@ -82,7 +52,7 @@ export const LegalLoadingSpinner = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
-            className="text-lg text-legal-gold font-semibold absolute left-1/2 -translate-x-1/2 whitespace-nowrap"
+            className="text-lg text-legal-gold font-semibold absolute text-center"
           >
             {ANALYSIS_PHRASES[currentPhraseIndex]}
           </motion.p>
@@ -90,7 +60,7 @@ export const LegalLoadingSpinner = () => {
       </div>
 
       <motion.div
-        className="mt-8 w-64 h-1 bg-legal-blue/20 rounded-full overflow-hidden"
+        className="mt-8 w-64 h-1 bg-legal-blue/20 rounded-full overflow-hidden fixed bottom-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
