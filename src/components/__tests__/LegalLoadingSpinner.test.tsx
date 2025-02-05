@@ -18,21 +18,21 @@ describe('LegalLoadingSpinner', () => {
     expect(screen.getByText('Analyzing Case Documents...')).toBeInTheDocument();
   });
 
-  it('changes phrases over time', () => {
+  it('changes phrases over time with 2.5 second intervals', () => {
     render(<LegalLoadingSpinner />);
     
     // Initial phrase
     expect(screen.getByText('Analyzing Case Documents...')).toBeInTheDocument();
     
-    // After 1 second
+    // After 2.5 seconds
     act(() => {
-      vi.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(2500);
     });
     expect(screen.getByText('Identifying Key Arguments...')).toBeInTheDocument();
     
-    // After another second
+    // After another 2.5 seconds
     act(() => {
-      vi.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(2500);
     });
     expect(screen.getByText('Evaluating Settlement Potential...')).toBeInTheDocument();
   });

@@ -20,7 +20,7 @@ export const LegalLoadingSpinner = () => {
       setCurrentPhraseIndex((prev) => 
         prev === ANALYSIS_PHRASES.length - 1 ? prev : prev + 1
       );
-    }, 1000);
+    }, 2500); // Changed from 1000 to 2500 milliseconds
 
     return () => clearInterval(interval);
   }, []);
