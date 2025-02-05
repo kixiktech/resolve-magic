@@ -21,6 +21,10 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
+vi.mock('@/utils/fileAnalysis', () => ({
+  analyzeFile: vi.fn(),
+}));
+
 describe('FileUpload', () => {
   beforeEach(() => {
     vi.useFakeTimers();

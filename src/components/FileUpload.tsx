@@ -1,19 +1,19 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, File, X, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LegalLoadingSpinner } from "./LegalLoadingSpinner";
 import { MediationAnalysis } from "./MediationAnalysis";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { DropZone } from "./DropZone";
+import { FileList } from "./FileList";
+import { analyzeFile } from "@/utils/fileAnalysis";
 
 export const FileUpload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
-  const { toast } = useToast();
   
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -25,43 +25,20 @@ export const FileUpload = () => {
     }
   };
 
-  const analyzeFiles = async (uploadedFiles: File[]) => {
+  const handleFiles = async (newFiles: File[]) => {
+    setFiles((prev) => [...prev, ...newFiles]);
     setIsAnalyzing(true);
     
     try {
-      const file = uploadedFiles[0]; // Process first file for now
-      const content = await file.text();
-      
-      const { data, error } = await supabase.functions.invoke('analyze-document', {
-        body: { documentContent: content },
-      });
-
-      if (error) {
-        throw new Error(error.message);
+      const { data, error } = await analyzeFile(newFiles[0]);
+      if (!error && data) {
+        setAnalysis(data);
+      } else {
+        setFiles([]);
       }
-
-      setAnalysis(data);
-      toast({
-        title: "Analysis Complete",
-        description: "The document has been successfully analyzed.",
-      });
-    } catch (error) {
-      console.error("Analysis failed:", error);
-      toast({
-        title: "Analysis Failed",
-        description: "Failed to analyze document. Please try again.",
-        variant: "destructive",
-      });
-      setFiles([]);
     } finally {
       setIsAnalyzing(false);
     }
-  };
-
-  const resetFileUpload = () => {
-    setFiles([]);
-    setAnalysis(null);
-    setIsAnalyzing(false);
   };
 
   const handleDrop = async (e: React.DragEvent) => {
@@ -70,14 +47,24 @@ export const FileUpload = () => {
     setDragActive(false);
 
     const droppedFiles = Array.from(e.dataTransfer.files);
-    setFiles((prev) => [...prev, ...droppedFiles]);
-    await analyzeFiles(droppedFiles);
+    await handleFiles(droppedFiles);
   };
 
-  const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
-    setFiles((prev) => [...prev, ...selectedFiles]);
-    await analyzeFiles(selectedFiles);
+  useEffect(() => {
+    const handleFileSelection = (e: CustomEvent<File[]>) => {
+      handleFiles(e.detail);
+    };
+
+    window.addEventListener('filesSelected', handleFileSelection as EventListener);
+    return () => {
+      window.removeEventListener('filesSelected', handleFileSelection as EventListener);
+    };
+  }, []);
+
+  const resetFileUpload = () => {
+    setFiles([]);
+    setAnalysis(null);
+    setIsAnalyzing(false);
   };
 
   const removeFile = (index: number) => {
@@ -115,45 +102,12 @@ export const FileUpload = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div
-              className={`relative rounded-lg border-2 border-dashed transition-colors ${
-                dragActive ? "border-legal-blue" : "border-legal-gray/30"
-              } p-8 bg-legal-charcoal/30`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
+            <DropZone
+              dragActive={dragActive}
+              onDrag={handleDrag}
               onDrop={handleDrop}
-            >
-              <input
-                type="file"
-                multiple
-                className="hidden"
-                id="file-upload"
-                onChange={handleFileInput}
-                aria-label="select files"
-                accept=".txt,.doc,.docx,.pdf"
-              />
-              
-              <div className="flex flex-col items-center justify-center text-center cursor-pointer" onClick={triggerFileInput}>
-                <Upload className="h-12 w-12 text-legal-gray mb-4" />
-                <p className="text-lg font-medium text-legal-offwhite mb-2 text-center">
-                  Drag and drop your case files here
-                </p>
-                <p className="text-sm text-legal-gray mb-4 text-center">
-                  or click to select files
-                </p>
-                <Button 
-                  variant="outline" 
-                  className="bg-legal-blue/10 text-legal-gold border-legal-blue/20 hover:bg-legal-blue/20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    triggerFileInput();
-                  }}
-                >
-                  Select Files
-                </Button>
-              </div>
-            </div>
+              triggerFileInput={triggerFileInput}
+            />
           </motion.div>
         )}
 
@@ -172,33 +126,7 @@ export const FileUpload = () => {
         )}
 
         {files.length > 0 && !isAnalyzing && !analysis && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mt-6 space-y-2"
-          >
-            {files.map((file, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="flex items-center justify-between p-3 bg-legal-charcoal/50 border border-legal-blue/20 rounded-lg"
-              >
-                <div className="flex items-center space-x-3">
-                  <File className="h-5 w-5 text-legal-gray" />
-                  <span className="text-sm font-medium text-legal-offwhite">{file.name}</span>
-                </div>
-                <button
-                  onClick={() => removeFile(index)}
-                  className="text-legal-gray hover:text-legal-burgundy transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </motion.div>
-            ))}
-          </motion.div>
+          <FileList files={files} onRemoveFile={removeFile} />
         )}
       </AnimatePresence>
     </div>
