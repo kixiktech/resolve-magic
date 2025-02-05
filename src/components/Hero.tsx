@@ -33,7 +33,7 @@ export const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <p className="text-sm text-legal-gray">
+            <p className="text-sm text-[#C4A349] opacity-55">
               Trusted by leading mediation firms nationwide
             </p>
           </motion.div>
