@@ -1,16 +1,19 @@
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, File, X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LegalLoadingSpinner } from "./LegalLoadingSpinner";
 import { MediationAnalysis } from "./MediationAnalysis";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 export const FileUpload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
   
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -24,29 +27,31 @@ export const FileUpload = () => {
 
   const analyzeFiles = async (uploadedFiles: File[]) => {
     setIsAnalyzing(true);
-    setError(null);
     
     try {
       const file = uploadedFiles[0]; // Process first file for now
       const content = await file.text();
       
-      const response = await fetch('/functions/v1/analyze-document', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ documentContent: content }),
+      const { data, error } = await supabase.functions.invoke('analyze-document', {
+        body: { documentContent: content },
       });
 
-      if (!response.ok) {
-        throw new Error('Analysis failed. Please try again.');
+      if (error) {
+        throw new Error(error.message);
       }
 
-      const analysisResult = await response.json();
-      setAnalysis(analysisResult);
+      setAnalysis(data);
+      toast({
+        title: "Analysis Complete",
+        description: "The document has been successfully analyzed.",
+      });
     } catch (error) {
       console.error("Analysis failed:", error);
-      setError("Failed to analyze document. Please try again.");
+      toast({
+        title: "Analysis Failed",
+        description: "Failed to analyze document. Please try again.",
+        variant: "destructive",
+      });
       setFiles([]);
     } finally {
       setIsAnalyzing(false);
@@ -57,7 +62,6 @@ export const FileUpload = () => {
     setFiles([]);
     setAnalysis(null);
     setIsAnalyzing(false);
-    setError(null);
   };
 
   const handleDrop = async (e: React.DragEvent) => {
@@ -138,9 +142,6 @@ export const FileUpload = () => {
                 <p className="text-sm text-legal-gray mb-4 text-center">
                   or click to select files
                 </p>
-                {error && (
-                  <p className="text-red-500 mb-4">{error}</p>
-                )}
                 <Button 
                   variant="outline" 
                   className="bg-legal-blue/10 text-legal-gold border-legal-blue/20 hover:bg-legal-blue/20"

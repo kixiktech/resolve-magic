@@ -17,6 +17,8 @@ serve(async (req) => {
   try {
     const { documentContent } = await req.json();
 
+    console.log('Received document for analysis, length:', documentContent.length);
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -68,6 +70,7 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    console.log('OpenAI API response received');
     
     // Parse the response into our expected format
     const analysisText = data.choices[0].message.content;
