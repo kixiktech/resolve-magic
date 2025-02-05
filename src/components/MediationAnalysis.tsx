@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { Scale, TrendingUp, HandshakeIcon, Strategy } from "lucide-react";
+import { Scale, TrendingUp, HandshakeIcon, Gavel } from "lucide-react";
 
 interface AnalysisBlock {
   title: string;
@@ -70,7 +70,7 @@ export const MediationAnalysis = ({ analysis }: MediationAnalysisProps) => {
       <Separator className="my-6 opacity-50" />
       {renderBlock(analysis.settlement, <HandshakeIcon className="h-6 w-6" />)}
       <Separator className="my-6 opacity-50" />
-      {renderBlock(analysis.strategy, <Strategy className="h-6 w-6" />)}
+      {renderBlock(analysis.strategy, <Gavel className="h-6 w-6" />)}
     </motion.div>
   );
 };
