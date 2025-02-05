@@ -3,7 +3,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, File, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { LegalLoadingSpinner } from "./LegalLoadingSpinner";
 import { MediationAnalysis } from "./MediationAnalysis";
 
@@ -12,7 +11,6 @@ export const FileUpload = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
-  const { toast } = useToast();
   
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -75,16 +73,8 @@ export const FileUpload = () => {
       await new Promise(resolve => setTimeout(resolve, remainingTime));
 
       setAnalysis(mockAnalysis);
-      toast({
-        title: "Analysis Complete",
-        description: "Comprehensive mediation insights are ready for your review.",
-      });
     } catch (error) {
-      toast({
-        title: "Analysis Failed",
-        description: "There was an error analyzing the documents.",
-        variant: "destructive",
-      });
+      console.error("Analysis failed:", error);
     } finally {
       setIsAnalyzing(false);
     }
@@ -97,20 +87,12 @@ export const FileUpload = () => {
 
     const droppedFiles = Array.from(e.dataTransfer.files);
     setFiles((prev) => [...prev, ...droppedFiles]);
-    toast({
-      title: "Files uploaded successfully",
-      description: `${droppedFiles.length} files have been added`,
-    });
     await analyzeFiles(droppedFiles);
   };
 
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
     setFiles((prev) => [...prev, ...selectedFiles]);
-    toast({
-      title: "Files uploaded successfully",
-      description: `${selectedFiles.length} files have been added`,
-    });
     await analyzeFiles(selectedFiles);
   };
 
@@ -223,3 +205,4 @@ export const FileUpload = () => {
     </div>
   );
 };
+
