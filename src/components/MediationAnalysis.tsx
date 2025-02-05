@@ -36,18 +36,18 @@ export const MediationAnalysis = ({ analysis }: MediationAnalysisProps) => {
 
   const renderBlock = (block: AnalysisBlock, icon: React.ReactNode) => (
     <motion.div variants={item}>
-      <Card className="bg-zinc-900/50 backdrop-blur-sm border-zinc-800 hover:border-primary/50 transition-all duration-300">
+      <Card className="bg-legal-charcoal/50 backdrop-blur-sm border-legal-blue/20 hover:border-legal-gold/50 transition-all duration-300">
         <CardHeader className="flex flex-row items-center space-x-4">
-          <div className="p-2 rounded-full bg-primary/10 text-primary">
+          <div className="p-2 rounded-full bg-legal-blue/10 text-legal-gold">
             {icon}
           </div>
-          <CardTitle className="text-xl text-primary">{block.title}</CardTitle>
+          <CardTitle className="text-xl text-legal-gold">{block.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-3">
             {block.content.map((point, index) => (
-              <li key={index} className="text-zinc-300 flex items-start space-x-2">
-                <span className="text-primary mt-1">•</span>
+              <li key={index} className="text-legal-offwhite flex items-start space-x-2">
+                <span className="text-legal-gold mt-1">•</span>
                 <span>{point}</span>
               </li>
             ))}
@@ -65,11 +65,11 @@ export const MediationAnalysis = ({ analysis }: MediationAnalysisProps) => {
       className="max-w-5xl mx-auto p-6 space-y-6"
     >
       {renderBlock(analysis.overview, <Scale className="h-6 w-6" />)}
-      <Separator className="my-6 opacity-50" />
+      <Separator className="my-6 opacity-50 bg-legal-blue/20" />
       {renderBlock(analysis.risks, <TrendingUp className="h-6 w-6" />)}
-      <Separator className="my-6 opacity-50" />
+      <Separator className="my-6 opacity-50 bg-legal-blue/20" />
       {renderBlock(analysis.settlement, <HandshakeIcon className="h-6 w-6" />)}
-      <Separator className="my-6 opacity-50" />
+      <Separator className="my-6 opacity-50 bg-legal-blue/20" />
       {renderBlock(analysis.strategy, <Gavel className="h-6 w-6" />)}
     </motion.div>
   );

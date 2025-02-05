@@ -4,25 +4,25 @@
  
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --background: 222 10% 8%;
+    --foreground: 220 14% 91%;
+    --card: 222 12% 12%;
+    --card-foreground: 220 14% 91%;
+    --popover: 222 12% 12%;
+    --popover-foreground: 220 14% 91%;
+    --primary: 222 84% 59%;
+    --primary-foreground: 220 14% 91%;
+    --secondary: 42 47% 53%;
+    --secondary-foreground: 220 14% 91%;
+    --muted: 223 6% 24%;
+    --muted-foreground: 220 8% 76%;
+    --accent: 222 84% 59%;
+    --accent-foreground: 220 14% 91%;
+    --destructive: 0 68% 42%;
+    --destructive-foreground: 220 14% 91%;
+    --border: 223 6% 24%;
+    --input: 223 6% 24%;
+    --ring: 222 84% 59%;
     --radius: 0.75rem;
   }
 }
@@ -32,14 +32,14 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-legal-charcoal text-legal-offwhite antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+    @apply bg-white/5 backdrop-blur-lg border border-white/10;
   }
   
   .glass-dark {
