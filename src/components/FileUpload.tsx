@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, File, X } from "lucide-react";
@@ -123,8 +124,8 @@ export const FileUpload = () => {
           >
             <div
               className={`relative rounded-lg border-2 border-dashed transition-colors ${
-                dragActive ? "border-primary" : "border-zinc-300"
-              } p-8`}
+                dragActive ? "border-legal-blue" : "border-legal-gray/30"
+              } p-8 bg-legal-charcoal/30`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
@@ -142,14 +143,16 @@ export const FileUpload = () => {
                 htmlFor="file-upload"
                 className="flex flex-col items-center justify-center cursor-pointer"
               >
-                <Upload className="h-12 w-12 text-zinc-400 mb-4" />
-                <p className="text-lg font-medium mb-2">
+                <Upload className="h-12 w-12 text-legal-gray mb-4" />
+                <p className="text-lg font-medium text-legal-offwhite mb-2">
                   Drag and drop your case files here
                 </p>
-                <p className="text-sm text-zinc-500 mb-4">
+                <p className="text-sm text-legal-gray mb-4">
                   or click to select files
                 </p>
-                <Button variant="outline">Select Files</Button>
+                <Button variant="outline" className="bg-legal-blue/10 text-legal-gold border-legal-blue/20 hover:bg-legal-blue/20">
+                  Select Files
+                </Button>
               </label>
             </div>
           </motion.div>
@@ -182,15 +185,15 @@ export const FileUpload = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="flex items-center justify-between p-3 bg-zinc-50 rounded-lg"
+                className="flex items-center justify-between p-3 bg-legal-charcoal/50 border border-legal-blue/20 rounded-lg"
               >
                 <div className="flex items-center space-x-3">
-                  <File className="h-5 w-5 text-zinc-400" />
-                  <span className="text-sm font-medium">{file.name}</span>
+                  <File className="h-5 w-5 text-legal-gray" />
+                  <span className="text-sm font-medium text-legal-offwhite">{file.name}</span>
                 </div>
                 <button
                   onClick={() => removeFile(index)}
-                  className="text-zinc-400 hover:text-zinc-600"
+                  className="text-legal-gray hover:text-legal-burgundy transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
