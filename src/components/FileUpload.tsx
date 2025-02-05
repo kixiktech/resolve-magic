@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, File, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LegalLoadingSpinner } from "./LegalLoadingSpinner";
 import { MediationAnalysis } from "./MediationAnalysis";
+import { ArrowLeft } from "lucide-react";
 
 export const FileUpload = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -80,6 +80,12 @@ export const FileUpload = () => {
     }
   };
 
+  const resetFileUpload = () => {
+    setFiles([]);
+    setAnalysis(null);
+    setIsAnalyzing(false);
+  };
+
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -110,6 +116,20 @@ export const FileUpload = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
+      {analysis && !isAnalyzing && (
+        <div className="mb-6">
+          <Button
+            onClick={resetFileUpload}
+            variant="ghost"
+            className="text-legal-offwhite hover:text-legal-gold hover:bg-legal-blue/10"
+            data-testid="reset-upload-button"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Upload New Document
+          </Button>
+        </div>
+      )}
+      
       <AnimatePresence>
         {!isAnalyzing && !analysis && (
           <motion.div
@@ -205,4 +225,3 @@ export const FileUpload = () => {
     </div>
   );
 };
-
