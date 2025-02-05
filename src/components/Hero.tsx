@@ -13,17 +13,17 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-8 text-center"
+            className="space-y-8 text-center w-full"
           >
             <div className="flex justify-center">
               <Scale className="h-16 w-16 text-legal-gold" />
             </div>
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-legal-offwhite">
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-legal-offwhite text-center">
               AI-Powered
               <span className="text-legal-gold"> Mediation </span>
               Intelligence
             </h1>
-            <p className="mx-auto max-w-[800px] text-legal-gray md:text-xl lg:text-2xl">
+            <p className="mx-auto max-w-[800px] text-legal-gray md:text-xl lg:text-2xl text-center">
               Transform complex case files into actionable mediation insights. Get instant analysis of settlement ranges, negotiation leverage points, and strategic recommendations.
             </p>
           </motion.div>
@@ -32,6 +32,7 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-center w-full"
           >
             <p className="text-sm text-[#C4A349] opacity-55">
               Trusted by leading mediation firms nationwide

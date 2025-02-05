@@ -153,12 +153,12 @@ export const FileUpload = () => {
                 aria-label="select files"
               />
               
-              <div className="flex flex-col items-center justify-center cursor-pointer" onClick={triggerFileInput}>
+              <div className="flex flex-col items-center justify-center text-center cursor-pointer" onClick={triggerFileInput}>
                 <Upload className="h-12 w-12 text-legal-gray mb-4" />
-                <p className="text-lg font-medium text-legal-offwhite mb-2">
+                <p className="text-lg font-medium text-legal-offwhite mb-2 text-center">
                   Drag and drop your case files here
                 </p>
-                <p className="text-sm text-legal-gray mb-4">
+                <p className="text-sm text-legal-gray mb-4 text-center">
                   or click to select files
                 </p>
                 <Button 
