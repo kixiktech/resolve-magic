@@ -6,12 +6,22 @@ export const analyzeFile = async (file: File) => {
   try {
     const content = await file.text();
     
+    if (!content.trim()) {
+      throw new Error("The file appears to be empty");
+    }
+    
     const { data, error } = await supabase.functions.invoke('analyze-document', {
       body: { documentContent: content },
     });
 
     if (error) {
+      console.error('Analysis error:', error);
       throw new Error(error.message);
+    }
+
+    if (!data || typeof data !== 'object') {
+      console.error('Invalid response data:', data);
+      throw new Error('Invalid response from analysis service');
     }
 
     toast({
@@ -24,7 +34,7 @@ export const analyzeFile = async (file: File) => {
     console.error("Analysis failed:", error);
     toast({
       title: "Analysis Failed",
-      description: "Failed to analyze document. Please try again.",
+      description: error.message || "Failed to analyze document. Please try again.",
       variant: "destructive",
     });
     return { data: null, error };

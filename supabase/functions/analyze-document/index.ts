@@ -21,6 +21,10 @@ serve(async (req) => {
       throw new Error('Document content is required');
     }
 
+    if (typeof documentContent !== 'string') {
+      throw new Error('Document content must be a string');
+    }
+
     console.log('Received document for analysis, length:', documentContent.length);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -30,7 +34,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini', // Changed to more cost-effective model
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -63,14 +67,16 @@ serve(async (req) => {
             - Potential roadblocks and mitigation strategies
             - Next steps and action items
 
-            Format each section's points as bullet points starting with "-" for easy parsing.
-            Be specific, practical, and solution-oriented in your analysis.
-            Keep each bullet point clear and actionable.`
+            IMPORTANT: Format EXACTLY as specified:
+            1. Start each section with the number and title
+            2. Use "-" for bullet points
+            3. Include EXACTLY these four sections
+            4. Make each point clear and actionable`
           },
           { role: 'user', content: documentContent }
         ],
-        temperature: 0.5, // Reduced for more focused responses
-        max_tokens: 1500, // Optimized token limit
+        temperature: 0.5,
+        max_tokens: 1500,
       }),
     });
 
@@ -84,65 +90,79 @@ serve(async (req) => {
     console.log('OpenAI API response received');
     
     if (!data.choices?.[0]?.message?.content) {
+      console.error('Invalid OpenAI response structure:', data);
       throw new Error('Invalid response from OpenAI API');
     }
 
     const analysisText = data.choices[0].message.content;
     
-    // Improved section parsing with error handling
-    const sections = analysisText.split(/\d\.\s+/).filter(Boolean);
+    // More robust section parsing
+    const sections = analysisText
+      .split(/\d\.\s+/)
+      .filter(Boolean)
+      .map(section => section.trim());
     
     if (sections.length !== 4) {
-      console.error('Unexpected number of sections:', sections.length);
-      console.error('Raw sections:', sections);
-      throw new Error('Failed to parse analysis sections correctly');
+      console.error('Raw OpenAI response:', analysisText);
+      console.error('Parsed sections:', sections);
+      throw new Error(`Expected 4 sections, got ${sections.length}`);
     }
 
-    // Enhanced parsing with validation
-    const parseSection = (content: string) => {
+    // Enhanced parsing with better validation
+    const parseSection = (content: string): string[] => {
+      if (!content || typeof content !== 'string') {
+        throw new Error('Invalid section content');
+      }
+
       const points = content
         .split('\n')
         .filter(line => line.trim().startsWith('-'))
-        .map(line => line.trim().substring(2))
+        .map(line => line.trim().substring(1).trim())
         .filter(Boolean);
       
       if (points.length === 0) {
+        console.error('Section content:', content);
         throw new Error('No valid bullet points found in section');
       }
       
       return points;
     };
 
-    const analysis = {
-      overview: {
-        title: "Case Overview & Dynamics",
-        content: parseSection(sections[0])
-      },
-      risks: {
-        title: "Risk Assessment & Leverage Points",
-        content: parseSection(sections[1])
-      },
-      settlement: {
-        title: "Settlement Framework & Valuation",
-        content: parseSection(sections[2])
-      },
-      strategy: {
-        title: "Strategic Recommendations",
-        content: parseSection(sections[3])
-      }
-    };
+    try {
+      const analysis = {
+        overview: {
+          title: "Case Overview & Dynamics",
+          content: parseSection(sections[0])
+        },
+        risks: {
+          title: "Risk Assessment & Leverage Points",
+          content: parseSection(sections[1])
+        },
+        settlement: {
+          title: "Settlement Framework & Valuation",
+          content: parseSection(sections[2])
+        },
+        strategy: {
+          title: "Strategic Recommendations",
+          content: parseSection(sections[3])
+        }
+      };
 
-    // Validate final analysis structure
-    Object.entries(analysis).forEach(([key, section]) => {
-      if (!section.content.length) {
-        console.error(`Empty content in section: ${key}`);
-        throw new Error(`Failed to parse content for section: ${section.title}`);
-      }
-    });
+      // Final validation
+      Object.entries(analysis).forEach(([key, section]) => {
+        if (!section.content.length) {
+          throw new Error(`Empty content in section: ${section.title}`);
+        }
+      });
 
-    return new Response(JSON.stringify(analysis), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+      return new Response(JSON.stringify(analysis), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch (parseError) {
+      console.error('Parsing error:', parseError);
+      console.error('Raw sections:', sections);
+      throw new Error(`Failed to parse analysis: ${parseError.message}`);
+    }
   } catch (error) {
     console.error('Error:', error);
     return new Response(JSON.stringify({ error: error.message }), {
