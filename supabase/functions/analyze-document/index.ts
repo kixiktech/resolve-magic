@@ -17,6 +17,10 @@ serve(async (req) => {
   try {
     const { documentContent } = await req.json();
 
+    if (!documentContent) {
+      throw new Error('Document content is required');
+    }
+
     console.log('Received document for analysis, length:', documentContent.length);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -72,10 +76,21 @@ serve(async (req) => {
     const data = await response.json();
     console.log('OpenAI API response received');
     
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI API');
+    }
+
     // Parse the response into our expected format
     const analysisText = data.choices[0].message.content;
+    
+    // Split the text into sections, filtering out empty strings
     const sections = analysisText.split(/\d\.\s+/).filter(Boolean);
     
+    if (sections.length !== 4) {
+      console.error('Unexpected number of sections:', sections.length);
+      throw new Error('Failed to parse analysis sections correctly');
+    }
+
     const analysis = {
       overview: {
         title: "Case Overview & Dynamics",
@@ -94,6 +109,14 @@ serve(async (req) => {
         content: sections[3].split('\n').filter(line => line.trim().startsWith('-')).map(line => line.trim().substring(2))
       }
     };
+
+    // Validate that each section has content
+    Object.entries(analysis).forEach(([key, section]) => {
+      if (!section.content.length) {
+        console.error(`Empty content in section: ${key}`);
+        throw new Error(`Failed to parse content for section: ${section.title}`);
+      }
+    });
 
     return new Response(JSON.stringify(analysis), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
