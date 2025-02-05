@@ -30,14 +30,14 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini', // Changed to more cost-effective model
         messages: [
           {
             role: 'system',
             content: `You are a highly experienced legal mediator analyzing legal documents. 
             Your task is to provide a comprehensive analysis that helps mediators understand and navigate the case effectively.
             
-            Structure your analysis in these sections:
+            Structure your analysis in these sections, with precise and concise bullet points:
 
             1. Case Overview & Dynamics
             - Key parties involved and their relationships
@@ -64,14 +64,21 @@ serve(async (req) => {
             - Next steps and action items
 
             Format each section's points as bullet points starting with "-" for easy parsing.
-            Be specific, practical, and solution-oriented in your analysis.`
+            Be specific, practical, and solution-oriented in your analysis.
+            Keep each bullet point clear and actionable.`
           },
           { role: 'user', content: documentContent }
         ],
-        temperature: 0.7,
-        max_tokens: 2000,
+        temperature: 0.5, // Reduced for more focused responses
+        max_tokens: 1500, // Optimized token limit
       }),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('OpenAI API error:', errorData);
+      throw new Error(errorData.error?.message || 'Failed to get response from OpenAI');
+    }
 
     const data = await response.json();
     console.log('OpenAI API response received');
@@ -80,37 +87,52 @@ serve(async (req) => {
       throw new Error('Invalid response from OpenAI API');
     }
 
-    // Parse the response into our expected format
     const analysisText = data.choices[0].message.content;
     
-    // Split the text into sections, filtering out empty strings
+    // Improved section parsing with error handling
     const sections = analysisText.split(/\d\.\s+/).filter(Boolean);
     
     if (sections.length !== 4) {
       console.error('Unexpected number of sections:', sections.length);
+      console.error('Raw sections:', sections);
       throw new Error('Failed to parse analysis sections correctly');
     }
+
+    // Enhanced parsing with validation
+    const parseSection = (content: string) => {
+      const points = content
+        .split('\n')
+        .filter(line => line.trim().startsWith('-'))
+        .map(line => line.trim().substring(2))
+        .filter(Boolean);
+      
+      if (points.length === 0) {
+        throw new Error('No valid bullet points found in section');
+      }
+      
+      return points;
+    };
 
     const analysis = {
       overview: {
         title: "Case Overview & Dynamics",
-        content: sections[0].split('\n').filter(line => line.trim().startsWith('-')).map(line => line.trim().substring(2))
+        content: parseSection(sections[0])
       },
       risks: {
         title: "Risk Assessment & Leverage Points",
-        content: sections[1].split('\n').filter(line => line.trim().startsWith('-')).map(line => line.trim().substring(2))
+        content: parseSection(sections[1])
       },
       settlement: {
         title: "Settlement Framework & Valuation",
-        content: sections[2].split('\n').filter(line => line.trim().startsWith('-')).map(line => line.trim().substring(2))
+        content: parseSection(sections[2])
       },
       strategy: {
         title: "Strategic Recommendations",
-        content: sections[3].split('\n').filter(line => line.trim().startsWith('-')).map(line => line.trim().substring(2))
+        content: parseSection(sections[3])
       }
     };
 
-    // Validate that each section has content
+    // Validate final analysis structure
     Object.entries(analysis).forEach(([key, section]) => {
       if (!section.content.length) {
         console.error(`Empty content in section: ${key}`);
