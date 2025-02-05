@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Scale } from "lucide-react";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 pointer-events-none" />
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-900 to-background">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-500/10 via-background/5 to-background pointer-events-none" />
       
       <div className="container px-4 md:px-6 relative z-10">
         <div className="flex flex-col items-center space-y-4 text-center">
@@ -15,12 +15,16 @@ export const Hero = () => {
             transition={{ duration: 0.5 }}
             className="space-y-2"
           >
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-              Transform Legal Documents into
-              <span className="text-primary"> Actionable Insights</span>
+            <div className="flex justify-center mb-8">
+              <Scale className="h-16 w-16 text-primary" />
+            </div>
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+              AI-Powered
+              <span className="text-primary"> Mediation </span>
+              Intelligence
             </h1>
-            <p className="mx-auto max-w-[700px] text-zinc-500 md:text-xl">
-              Upload your case files and let our AI-powered system provide instant, actionable intelligence for faster resolutions.
+            <p className="mx-auto max-w-[800px] text-zinc-400 md:text-xl lg:text-2xl mt-4">
+              Transform complex case files into actionable mediation insights. Get instant analysis of settlement ranges, negotiation leverage points, and strategic recommendations.
             </p>
           </motion.div>
           
@@ -28,12 +32,17 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-x-4"
+            className="space-y-4"
           >
-            <Button className="glass hover:glass-dark transition-all duration-300">
-              Get Started
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button className="glass hover:glass-dark transition-all duration-300 text-lg px-8 py-6">
+                Start Analyzing Cases
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+            <p className="text-sm text-zinc-500">
+              Trusted by leading mediation firms nationwide
+            </p>
           </motion.div>
         </div>
       </div>

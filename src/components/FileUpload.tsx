@@ -26,49 +26,51 @@ export const FileUpload = () => {
   const analyzeFiles = async (uploadedFiles: File[]) => {
     setIsAnalyzing(true);
     try {
-      // Here you would integrate with OpenAI API through your Supabase backend
-      // For now, we'll simulate the analysis with a timeout
+      // Simulate analysis with a timeout
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Simulated analysis result
       setAnalysis({
         overview: {
-          title: "Case Overview",
+          title: "Case Overview & Dynamics",
           content: [
-            "Dispute between Company A and Company B regarding contract breach",
-            "Estimated case value: $500,000",
-            "Duration of dispute: 8 months"
+            "Multi-party commercial dispute involving breach of contract and intellectual property claims",
+            "Total claimed damages: $2.8M with significant reputational considerations",
+            "Key relationship dynamics indicate potential for business continuity post-settlement",
+            "Time-sensitive elements due to pending regulatory deadlines"
           ]
         },
         risks: {
-          title: "Risks & Opportunities",
+          title: "Risk Assessment & Leverage Points",
           content: [
-            "High probability of successful mediation",
-            "Key evidence supports plaintiff's position",
-            "Defendant shows willingness to negotiate"
+            "Plaintiff's position strengthened by documented email exchanges and witness statements",
+            "Defendant's counterclaim lacks substantial evidence but raises valid procedural concerns",
+            "80% probability of successful mediation based on party engagement and case complexity",
+            "Critical opportunity window in next 45 days before significant cost escalation"
           ]
         },
         settlement: {
-          title: "Settlement Analysis",
+          title: "Settlement Framework & Valuation",
           content: [
-            "Recommended settlement range: $350,000 - $450,000",
-            "Historical settlement data suggests 85% success rate",
-            "Optimal timing for settlement: Within next 30 days"
+            "Recommended settlement range: $1.8M - $2.2M based on comparable case outcomes",
+            "Non-monetary terms identified: IP licensing agreement, future business collaboration",
+            "Structured payment options available with 24-month maximum term",
+            "Tax implications favor settlement before end of fiscal quarter"
           ]
         },
         strategy: {
-          title: "Negotiation Strategy",
+          title: "Strategic Recommendations",
           content: [
-            "Focus on maintaining business relationship",
-            "Emphasize mutual benefits of early resolution",
-            "Consider structured settlement options"
+            "Begin with joint session focusing on future business opportunities rather than past grievances",
+            "Utilize bracketing technique with initial range of $1.5M - $2.5M",
+            "Address non-monetary terms early to build momentum through quick wins",
+            "Consider mediator's proposal if parties remain within 20% gap after third round"
           ]
         }
       });
 
       toast({
         title: "Analysis Complete",
-        description: "Document analysis has been completed successfully.",
+        description: "Comprehensive mediation insights are ready for your review.",
       });
     } catch (error) {
       toast({
