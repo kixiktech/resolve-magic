@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, File, X } from "lucide-react";
@@ -27,10 +26,10 @@ export const FileUpload = () => {
   const analyzeFiles = async (uploadedFiles: File[]) => {
     setIsAnalyzing(true);
     try {
-      // Simulate analysis with a timeout
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      setAnalysis({
+      const startTime = Date.now();
+
+      // Simulate analysis
+      const mockAnalysis = {
         overview: {
           title: "Case Overview & Dynamics",
           content: [
@@ -67,8 +66,14 @@ export const FileUpload = () => {
             "Consider mediator's proposal if parties remain within 20% gap after third round"
           ]
         }
-      });
+      };
 
+      // Ensure minimum 7 second duration
+      const analysisTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, 7000 - analysisTime);
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
+
+      setAnalysis(mockAnalysis);
       toast({
         title: "Analysis Complete",
         description: "Comprehensive mediation insights are ready for your review.",
