@@ -1,6 +1,6 @@
+
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Scale } from "lucide-react";
+import { Scale } from "lucide-react";
 
 export const Hero = () => {
   return (
@@ -32,14 +32,7 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-4"
           >
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="glass hover:glass-dark transition-all duration-300 text-lg px-8 py-6 bg-legal-steel hover:bg-legal-steel/80 text-legal-offwhite">
-                Start Analyzing Cases
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
             <p className="text-sm text-legal-gray">
               Trusted by leading mediation firms nationwide
             </p>

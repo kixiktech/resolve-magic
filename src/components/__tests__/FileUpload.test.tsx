@@ -1,5 +1,6 @@
 
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { FileUpload } from '../FileUpload';
 import { vi } from 'vitest';
 

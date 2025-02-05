@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, File, X } from "lucide-react";
@@ -142,6 +143,7 @@ export const FileUpload = () => {
                 className="hidden"
                 id="file-upload"
                 onChange={handleFileInput}
+                aria-label="select files"
               />
               
               <label
