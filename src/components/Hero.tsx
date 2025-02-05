@@ -4,7 +4,7 @@ import { Scale } from "lucide-react";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-legal-charcoal to-background">
+    <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-legal-charcoal to-background">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-legal-blue/10 via-background/5 to-background pointer-events-none" />
       
       <div className="container px-4 md:px-6 relative z-10">
@@ -43,3 +43,4 @@ export const Hero = () => {
     </section>
   );
 };
+
