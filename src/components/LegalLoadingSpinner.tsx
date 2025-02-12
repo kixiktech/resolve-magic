@@ -27,19 +27,27 @@ export const LegalLoadingSpinner = () => {
 
   // Reset progress and phrases when component mounts
   useEffect(() => {
+    const TOTAL_DURATION = 35000; // 35 seconds in milliseconds
+    const UPDATE_INTERVAL = 100; // Update every 100ms
+    const STEPS = TOTAL_DURATION / UPDATE_INTERVAL;
+    const INCREMENT = 100 / STEPS;
+
     setProgress(0);
     setUsedPhrases([]);
     
+    const startTime = Date.now();
+    
     // Start progress bar
     const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + (100 / 350); // 35 seconds total (350 intervals of 100ms)
-      });
-    }, 100);
+      const elapsedTime = Date.now() - startTime;
+      
+      if (elapsedTime >= TOTAL_DURATION) {
+        setProgress(100);
+        clearInterval(progressInterval);
+      } else {
+        setProgress((elapsedTime / TOTAL_DURATION) * 100);
+      }
+    }, UPDATE_INTERVAL);
 
     return () => clearInterval(progressInterval);
   }, []);

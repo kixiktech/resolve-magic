@@ -7,10 +7,15 @@ import { vi } from 'vitest';
 describe('LegalLoadingSpinner', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    // Mock Date.now() to ensure consistent timing
+    vi.spyOn(Date, 'now')
+      .mockImplementationOnce(() => 0) // First call returns 0
+      .mockImplementation(() => 35000); // Subsequent calls return 35000
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('renders the first phrase initially', () => {
@@ -30,23 +35,32 @@ describe('LegalLoadingSpinner', () => {
     });
     
     // Verify that a new phrase is shown
-    const phraseElement = screen.getByText(/./); // Any text content
+    const phraseElement = screen.getByText(/./);
     expect(phraseElement).toBeInTheDocument();
   });
 
-  it('completes the progress bar after 35 seconds', () => {
+  it('should take exactly 35 seconds to complete the loading', () => {
     render(<LegalLoadingSpinner />);
     
     // Progress should start at 0
     const progressBar = document.querySelector('.bg-gradient-to-r');
     expect(progressBar).toHaveStyle({ width: '0%' });
     
-    // Advance time by 35 seconds
+    // Check progress at different intervals
     act(() => {
-      vi.advanceTimersByTime(35000);
+      vi.advanceTimersByTime(17500); // Half way
     });
+    expect(progressBar).toHaveStyle({ width: '50%' });
     
-    // Progress should be complete
+    act(() => {
+      vi.advanceTimersByTime(17500); // Complete
+    });
+    expect(progressBar).toHaveStyle({ width: '100%' });
+    
+    // Verify it doesn't go beyond 100%
+    act(() => {
+      vi.advanceTimersByTime(5000); // Extra time
+    });
     expect(progressBar).toHaveStyle({ width: '100%' });
   });
 
