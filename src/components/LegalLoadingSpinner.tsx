@@ -29,8 +29,6 @@ export const LegalLoadingSpinner = () => {
   useEffect(() => {
     const TOTAL_DURATION = 35000; // 35 seconds in milliseconds
     const UPDATE_INTERVAL = 100; // Update every 100ms
-    const STEPS = TOTAL_DURATION / UPDATE_INTERVAL;
-    const INCREMENT = 100 / STEPS;
 
     setProgress(0);
     setUsedPhrases([]);
@@ -40,12 +38,13 @@ export const LegalLoadingSpinner = () => {
     // Start progress bar
     const progressInterval = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
+      const currentProgress = Math.min((elapsedTime / TOTAL_DURATION) * 100, 100);
       
       if (elapsedTime >= TOTAL_DURATION) {
         setProgress(100);
         clearInterval(progressInterval);
       } else {
-        setProgress((elapsedTime / TOTAL_DURATION) * 100);
+        setProgress(currentProgress);
       }
     }, UPDATE_INTERVAL);
 
