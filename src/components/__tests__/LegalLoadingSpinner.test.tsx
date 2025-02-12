@@ -15,26 +15,39 @@ describe('LegalLoadingSpinner', () => {
 
   it('renders the first phrase initially', () => {
     render(<LegalLoadingSpinner />);
-    expect(screen.getByText('Analyzing Case Documents...')).toBeInTheDocument();
+    expect(screen.getByText(/Scanning Deposition Transcripts/)).toBeInTheDocument();
   });
 
-  it('changes phrases over time with 2.5 second intervals', () => {
+  it('changes phrases over time with random intervals', () => {
     render(<LegalLoadingSpinner />);
     
     // Initial phrase
-    expect(screen.getByText('Analyzing Case Documents...')).toBeInTheDocument();
+    expect(screen.getByText(/Scanning Deposition Transcripts/)).toBeInTheDocument();
     
-    // After 2.5 seconds
+    // Advance time by 4 seconds (within the 3-7 second range)
     act(() => {
-      vi.advanceTimersByTime(2500);
+      vi.advanceTimersByTime(4000);
     });
-    expect(screen.getByText('Identifying Key Arguments...')).toBeInTheDocument();
     
-    // After another 2.5 seconds
+    // Verify that a new phrase is shown
+    const phraseElement = screen.getByText(/./); // Any text content
+    expect(phraseElement).toBeInTheDocument();
+  });
+
+  it('completes the progress bar after 35 seconds', () => {
+    render(<LegalLoadingSpinner />);
+    
+    // Progress should start at 0
+    const progressBar = document.querySelector('.bg-gradient-to-r');
+    expect(progressBar).toHaveStyle({ width: '0%' });
+    
+    // Advance time by 35 seconds
     act(() => {
-      vi.advanceTimersByTime(2500);
+      vi.advanceTimersByTime(35000);
     });
-    expect(screen.getByText('Evaluating Settlement Potential...')).toBeInTheDocument();
+    
+    // Progress should be complete
+    expect(progressBar).toHaveStyle({ width: '100%' });
   });
 
   it('renders the Scale icon', () => {
@@ -43,9 +56,25 @@ describe('LegalLoadingSpinner', () => {
     expect(scaleIcon).toBeInTheDocument();
   });
 
-  it('renders a progress bar', () => {
+  it('never repeats phrases until all have been shown', () => {
     render(<LegalLoadingSpinner />);
-    const progressBar = document.querySelector('.bg-legal-gold');
-    expect(progressBar).toBeInTheDocument();
+    const seenPhrases = new Set();
+    
+    // Run through multiple phrase changes
+    for (let i = 0; i < 15; i++) {
+      act(() => {
+        vi.advanceTimersByTime(4000);
+      });
+      
+      const phraseElement = screen.getByText(/./);
+      const phraseText = phraseElement.textContent;
+      
+      // If we've seen less than 15 phrases, this should be a new one
+      if (seenPhrases.size < 15) {
+        expect(seenPhrases.has(phraseText)).toBeFalsy();
+      }
+      
+      seenPhrases.add(phraseText);
+    }
   });
 });

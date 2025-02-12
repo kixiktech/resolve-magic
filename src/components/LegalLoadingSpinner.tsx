@@ -3,26 +3,79 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
 const ANALYSIS_PHRASES = [
-  "Analyzing Case Documents...",
-  "Identifying Key Arguments...",
-  "Evaluating Settlement Potential...",
-  "Processing Legal Context...",
-  "Assessing Resolution Paths...",
-  "Calculating Settlement Range..."
+  "Scanning Deposition Transcripts...",
+  "Identifying Key Witness Statements...",
+  "Extracting Timeline Details...",
+  "Analyzing Credibility Indicators...",
+  "Mapping Case Chronology...",
+  "Categorizing Testimony Themes...",
+  "Evaluating Expert Testimonies...",
+  "Cross-Reference Checking...",
+  "Detecting Inconsistencies...",
+  "Compiling Exhibit References...",
+  "Assessing Witness Demeanor...",
+  "Highlighting Critical Admissions...",
+  "Organizing Factual Disputes...",
+  "Structuring Key Arguments...",
+  "Building Case Narrative..."
 ];
 
 export const LegalLoadingSpinner = () => {
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [usedPhrases, setUsedPhrases] = useState<number[]>([]);
+  const [progress, setProgress] = useState(0);
 
+  // Reset progress and phrases when component mounts
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhraseIndex((prev) => 
-        prev === ANALYSIS_PHRASES.length - 1 ? prev : prev + 1
-      );
-    }, 2500);
+    setProgress(0);
+    setUsedPhrases([]);
+    
+    // Start progress bar
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + (100 / 350); // 35 seconds total (350 intervals of 100ms)
+      });
+    }, 100);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(progressInterval);
   }, []);
+
+  // Function to get random unused phrase
+  const getNextPhrase = () => {
+    const availablePhrases = ANALYSIS_PHRASES
+      .map((_, index) => index)
+      .filter(index => !usedPhrases.includes(index));
+
+    if (availablePhrases.length === 0) {
+      setUsedPhrases([]);
+      return Math.floor(Math.random() * ANALYSIS_PHRASES.length);
+    }
+
+    const randomIndex = Math.floor(Math.random() * availablePhrases.length);
+    const nextPhraseIndex = availablePhrases[randomIndex];
+    
+    setUsedPhrases(prev => [...prev, nextPhraseIndex]);
+    return nextPhraseIndex;
+  };
+
+  // Handle phrase rotation
+  useEffect(() => {
+    const getRandomDuration = () => Math.floor(Math.random() * (7000 - 3000) + 3000);
+    let timeoutId: NodeJS.Timeout;
+
+    const rotatePhrase = () => {
+      setCurrentPhraseIndex(getNextPhrase());
+      timeoutId = setTimeout(rotatePhrase, getRandomDuration());
+    };
+
+    timeoutId = setTimeout(rotatePhrase, getRandomDuration());
+
+    return () => clearTimeout(timeoutId);
+  }, [usedPhrases]);
 
   return (
     <div className="flex flex-col items-center justify-center p-8 min-h-[300px]">
@@ -76,19 +129,14 @@ export const LegalLoadingSpinner = () => {
       </div>
 
       <motion.div
-        className="mt-8 w-64 h-1 bg-legal-blue/20 rounded-full overflow-hidden fixed bottom-8"
+        className="mt-8 w-64 h-2 bg-legal-blue/20 rounded-full overflow-hidden fixed bottom-8 shadow-[0_0_10px_rgba(196,163,73,0.3)]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
         <motion.div
-          className="h-full bg-legal-gold"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{
-            duration: 7,
-            ease: "linear",
-          }}
+          className="h-full bg-gradient-to-r from-legal-gold/80 via-legal-gold to-legal-gold/80 shadow-[0_0_15px_rgba(196,163,73,0.5)]"
+          style={{ width: `${progress}%` }}
         />
       </motion.div>
     </div>
