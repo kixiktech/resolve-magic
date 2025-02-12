@@ -1,6 +1,5 @@
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Scale } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const ANALYSIS_PHRASES = [
@@ -20,7 +19,7 @@ export const LegalLoadingSpinner = () => {
       setCurrentPhraseIndex((prev) => 
         prev === ANALYSIS_PHRASES.length - 1 ? prev : prev + 1
       );
-    }, 2500); // Changed from 1000 to 2500 milliseconds
+    }, 2500);
 
     return () => clearInterval(interval);
   }, []);
@@ -28,20 +27,37 @@ export const LegalLoadingSpinner = () => {
   return (
     <div className="flex flex-col items-center justify-center p-8 min-h-[300px]">
       <div className="relative">
-        <motion.div
-          className="w-24 h-24 flex items-center justify-center"
-          animate={{
-            rotate: 360,
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
-          <Scale className="h-16 w-16 text-legal-gold" />
-        </motion.div>
+        <div className="loader w-24 h-24">
+          <div className="loaderMiniContainer">
+            <div className="barContainer">
+              <span className="bar"></span>
+              <span className="bar bar2"></span>
+            </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 101 114"
+              className="svgIcon"
+            >
+              <circle
+                strokeWidth="7"
+                stroke="#C4A349"
+                transform="rotate(36.0692 46.1726 46.1727)"
+                r="29.5497"
+                cy="46.1727"
+                cx="46.1726"
+              ></circle>
+              <line
+                strokeWidth="7"
+                stroke="#C4A349"
+                y2="111.784"
+                x2="97.7088"
+                y1="67.7837"
+                x1="61.7089"
+              ></line>
+            </svg>
+          </div>
+        </div>
       </div>
 
       <div className="h-8 mt-8 relative flex items-center justify-center">
